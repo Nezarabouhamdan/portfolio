@@ -770,20 +770,6 @@ const InteractiveBackground = ({ theme }: { theme: ThemeKey }) => {
   const mouseY = useMotionValue(0);
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-    const handleMouseMove = (e: MouseEvent) => {
-      // Smoothly update mouse values
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
-
-  if (!isMounted) return null;
-
   // Create smooth spring physics for the blobs so they lag behind the cursor slightly (liquid feel)
   const springConfig = { damping: 25, stiffness: 150 };
   const x1 = useSpring(mouseX, springConfig);
@@ -798,6 +784,32 @@ const InteractiveBackground = ({ theme }: { theme: ThemeKey }) => {
   );
   const springX2 = useSpring(x2, springConfig);
   const springY2 = useSpring(y2, springConfig);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (typeof window === "undefined") return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Smoothly update mouse values
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  // Return empty shell during SSR
+  if (!isMounted) {
+    return (
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute inset-0 transition-colors duration-700"
+          style={{ backgroundColor: t.colors.bg }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
