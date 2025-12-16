@@ -1,65 +1,554 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useMotionTemplate,
+  useMotionValue,
+} from "framer-motion";
+import {
+  Mail,
+  ArrowUpRight,
+  Palette,
+  Layout,
+  Cpu,
+  Terminal,
+  Globe,
+  ChevronDown,
+  Database,
+} from "lucide-react";
+
+// --- THEME CONFIGURATION ---
+// Define the specific styles for every mode requested
+const THEMES = {
+  obsidian: {
+    label: "Industrial (Current)",
+    colors: {
+      bg: "#0a0a0a", // Deep Black
+      card: "#171717",
+      textMain: "#ffffff",
+      textSub: "#a3a3a3",
+      accent: "#a3e635", // Electric Lime
+      border: "#262626",
+    },
+    font: "font-sans",
+    radius: "rounded-3xl",
+  },
+  modern: {
+    label: "Modern Minimalist",
+    colors: {
+      bg: "#ffffff",
+      card: "#f3f4f6",
+      textMain: "#18181b",
+      textSub: "#52525b",
+      accent: "#3b82f6", // Vivid Blue
+      border: "#e4e4e7",
+    },
+    font: "font-sans",
+    radius: "rounded-2xl",
+  },
+  classic: {
+    label: "Timeless Classic",
+    colors: {
+      bg: "#fdfbf7", // Cream / Off-white
+      card: "#ffffff",
+      textMain: "#2c2420", // Deep Brown/Black
+      textSub: "#594a42",
+      accent: "#d4af37", // Gold
+      border: "#e6e0d4",
+    },
+    font: "font-serif", // Uses Playfair Display
+    radius: "rounded-sm", // Sharp corners
+  },
+  vintage: {
+    label: "Retro 70s",
+    colors: {
+      bg: "#2b211e", // Dark Espresso
+      card: "#4a3b32",
+      textMain: "#fcecd0", // Warm Beige
+      textSub: "#d4a373",
+      accent: "#e76f51", // Burnt Orange
+      border: "#5e4b40",
+    },
+    font: "font-mono",
+    radius: "rounded-md",
+  },
+  chic: {
+    label: "Chic & Soft", // Interactive for Women style
+    colors: {
+      bg: "#fff1f2", // Very light rose
+      card: "#ffffff",
+      textMain: "#4c0519", // Dark Rose
+      textSub: "#9f1239",
+      accent: "#fb7185", // Pink/Coral
+      border: "#fecdd3",
+    },
+    font: "font-sans",
+    radius: "rounded-[2rem]", // Very round (Pill shape)
+  },
+  professional: {
+    label: "Corporate Pro",
+    colors: {
+      bg: "#0f172a", // Slate 900
+      card: "#1e293b", // Slate 800
+      textMain: "#f8fafc",
+      textSub: "#94a3b8",
+      accent: "#38bdf8", // Sky Blue
+      border: "#334155",
+    },
+    font: "font-sans",
+    radius: "rounded-md",
+  },
+};
+
+type ThemeKey = keyof typeof THEMES;
+
+// --- COMPONENTS ---
+
+const Navbar = ({ currentTheme, setTheme, isMenuOpen, setIsMenuOpen }: any) => (
+  <nav
+    style={{ borderColor: THEMES[currentTheme as ThemeKey].colors.border }}
+    className="fixed top-0 w-full z-50 px-6 py-6 border-b bg-[var(--bg)]/80 backdrop-blur-md transition-colors duration-500"
+  >
+    <div className="flex justify-between items-center max-w-7xl mx-auto">
+      <div
+        style={{ color: THEMES[currentTheme as ThemeKey].colors.textMain }}
+        className={`font-black text-2xl tracking-tighter ${
+          THEMES[currentTheme as ThemeKey].font
+        }`}
+      >
+        NS
+        <span style={{ color: THEMES[currentTheme as ThemeKey].colors.accent }}>
+          .
+        </span>
+      </div>
+
+      <div className="relative">
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          style={{
+            backgroundColor: THEMES[currentTheme as ThemeKey].colors.card,
+            color: THEMES[currentTheme as ThemeKey].colors.textMain,
+            borderColor: THEMES[currentTheme as ThemeKey].colors.border,
+          }}
+          className={`flex items-center gap-2 px-4 py-2 border rounded-full font-medium text-sm hover:opacity-80 transition-all`}
+        >
+          <Palette size={16} />
+          <span>{THEMES[currentTheme as ThemeKey].label}</span>
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {isMenuOpen && (
+          <div
+            style={{
+              backgroundColor: THEMES[currentTheme as ThemeKey].colors.card,
+              borderColor: THEMES[currentTheme as ThemeKey].colors.border,
+            }}
+            className="absolute right-0 mt-2 w-56 border rounded-xl shadow-2xl overflow-hidden flex flex-col p-2"
+          >
+            {Object.entries(THEMES).map(([key, theme]) => (
+              <button
+                key={key}
+                onClick={() => {
+                  setTheme(key);
+                  setIsMenuOpen(false);
+                }}
+                className="text-left px-4 py-3 rounded-lg text-sm hover:opacity-70 transition-opacity flex items-center gap-3"
+              >
+                <div
+                  style={{ background: theme.colors.accent }}
+                  className="w-3 h-3 rounded-full"
+                />
+                <span
+                  style={{
+                    color: THEMES[currentTheme as ThemeKey].colors.textMain,
+                  }}
+                >
+                  {theme.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </nav>
+);
+
+// Dynamic Card Component that respects the active theme
+function ThemeCard({
+  children,
+  theme,
+  className = "",
+}: {
+  children: React.ReactNode;
+  theme: ThemeKey;
+  className?: string;
+}) {
+  const activeTheme = THEMES[theme];
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY,
+  }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <div
+      className={`group relative border overflow-hidden transition-all duration-500 ${activeTheme.radius} ${className}`}
+      style={{
+        backgroundColor: activeTheme.colors.card,
+        borderColor: activeTheme.colors.border,
+      }}
+      onMouseMove={handleMouseMove}
+    >
+      <motion.div
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              650px circle at ${mouseX}px ${mouseY}px,
+              ${activeTheme.colors.accent}15,
+              transparent 80%
+            )
+          `,
+        }}
+      />
+      <div className="relative h-full">{children}</div>
+    </div>
+  );
+}
+
+// Inside app/page.tsx
+
+const Hero = ({ theme }: { theme: ThemeKey }) => {
+  const t = THEMES[theme];
+
+  return (
+    <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 overflow-hidden transition-colors duration-500">
+      <div className="max-w-7xl mx-auto z-10 w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        {/* LEFT: Text Content */}
+        <motion.div
+          // We add a key here so text re-animates slightly on theme change if you want,
+          // or remove 'key' to keep text static while photo changes.
+          className="order-2 md:order-1 relative z-20"
+        >
+          <div className="flex items-center gap-4 mb-8">
+            <div
+              style={{ backgroundColor: t.colors.accent }}
+              className="h-[2px] w-12 transition-colors duration-500"
+            ></div>
+            <span
+              style={{ color: t.colors.accent }}
+              className="font-mono tracking-widest uppercase text-sm font-bold transition-colors duration-500"
+            >
+              Frontend Architect
+            </span>
+          </div>
+
+          <h1
+            style={{ color: t.colors.textMain }}
+            className={`text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8 transition-colors duration-500 ${t.font}`}
+          >
+            NEZAR <br />
+            SAAB<span style={{ color: t.colors.accent }}>.</span>
+          </h1>
+
+          <p
+            style={{ color: t.colors.textSub }}
+            className="max-w-lg text-lg leading-relaxed mb-8 transition-colors duration-500"
+          >
+            Engineering highly interactive digital experiences in{" "}
+            <span style={{ color: t.colors.textMain }} className="font-bold">
+              Dubai
+            </span>
+            . Turning complex logic into pixel-perfect interfaces.
+          </p>
+
+          <div className="flex gap-4">
+            {/* Buttons... */}
+            {["GitHub", "LinkedIn"].map((item) => (
+              <a
+                key={item}
+                href="#"
+                style={{
+                  color: t.colors.textSub,
+                  borderColor: t.colors.border,
+                }}
+                className="px-6 py-3 border rounded-full hover:scale-105 transition-all font-mono uppercase text-sm flex items-center gap-2 group bg-white/5 backdrop-blur-sm"
+              >
+                <span
+                  className="group-hover:text-[var(--accent)]"
+                  style={{ "--accent": t.colors.accent } as any}
+                >
+                  {item}
+                </span>
+                <ArrowUpRight size={16} />
+              </a>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* RIGHT: Dynamic Photo Switching */}
+        <div className="order-1 md:order-2 relative flex justify-center md:justify-end mt-10 md:mt-0 h-[450px] md:h-[650px] w-full">
+          {/* Ambient Glow behind the photo */}
+          <motion.div
+            animate={{ backgroundColor: t.colors.accent }}
+            className="absolute top-20 right-10 w-64 h-64 rounded-full blur-[100px] opacity-20"
+          />
+
+          {/* This handles the smooth fading between images */}
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={theme} // This triggers the animation when theme changes
+              // MAKE SURE YOU NAME YOUR FILES EXACTLY LIKE THIS IN PUBLIC FOLDER
+              src="https://i.ibb.co/yn24JrmR/Black-and-White-Headshots-Nearme-karenvaisman-photographer-Ventura-losangeles-Burbank-Woodland-Hills.png"
+              alt="Nezar Saab"
+              initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="relative z-10 w-[350px] md:w-[500px] h-full object-cover object-top"
+              style={{
+                // Gradient fade at bottom to blend into background
+                maskImage: `linear-gradient(to bottom, black 80%, transparent 100%)`,
+                WebkitMaskImage: `linear-gradient(to bottom, black 80%, transparent 100%)`,
+              }}
+            />
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const BentoGrid = ({ theme }: { theme: ThemeKey }) => {
+  const t = THEMES[theme];
+  const stacks = [
+    { icon: Layout, title: "Next.js 14", sub: "App Router" },
+    { icon: Cpu, title: "React Core", sub: "Performance" },
+    { icon: Terminal, title: "TypeScript", sub: "Strict Typing" },
+    { icon: Database, title: "State Mgmt", sub: "Redux / Zustand" },
+  ];
+
+  return (
+    <section className="py-32 px-6 transition-colors duration-500">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-20">
+          <h2
+            style={{ color: t.colors.textMain }}
+            className={`text-4xl md:text-6xl font-bold mb-6 ${t.font}`}
+          >
+            Built for <span style={{ color: t.colors.accent }}>Scale</span>.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <ThemeCard
+            theme={theme}
+            className="col-span-1 md:col-span-2 row-span-2 p-8 min-h-[400px] flex flex-col justify-between"
+          >
+            <div>
+              <div
+                style={{
+                  backgroundColor: `${t.colors.accent}15`,
+                  color: t.colors.accent,
+                }}
+                className="w-12 h-12 rounded-full flex items-center justify-center mb-6"
+              >
+                <Globe size={24} />
+              </div>
+              <h3
+                style={{ color: t.colors.textMain }}
+                className={`text-3xl font-bold mb-4 ${t.font}`}
+              >
+                Frontend Lead
+              </h3>
+              <p
+                style={{ color: t.colors.textSub }}
+                className="leading-relaxed"
+              >
+                Delivering high-stakes projects at{" "}
+                <strong style={{ color: t.colors.textMain }}>Ava Five</strong>.
+                Specializing in complex architecture.
+              </p>
+            </div>
+            <div className="mt-8 flex gap-3 flex-wrap">
+              {["React", "Dubai", "Fintech"].map((tag) => (
+                <span
+                  key={tag}
+                  style={{
+                    backgroundColor: t.colors.bg,
+                    color: t.colors.textSub,
+                    borderColor: t.colors.border,
+                  }}
+                  className="px-3 py-1 border rounded-full text-xs font-mono"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </ThemeCard>
+
+          {stacks.map((s, i) => (
+            <ThemeCard
+              key={i}
+              theme={theme}
+              className="col-span-1 p-6 flex flex-col justify-center gap-4"
+            >
+              <s.icon style={{ color: t.colors.accent }} size={32} />
+              <div>
+                <h4
+                  style={{ color: t.colors.textMain }}
+                  className="font-bold text-lg"
+                >
+                  {s.title}
+                </h4>
+                <p style={{ color: t.colors.textSub }} className="text-sm">
+                  {s.sub}
+                </p>
+              </div>
+            </ThemeCard>
+          ))}
+
+          <div
+            className={`col-span-1 md:col-span-4 p-8 flex items-center justify-between group cursor-pointer overflow-hidden relative ${t.radius}`}
+            style={{ backgroundColor: t.colors.accent }}
+          >
+            <h3
+              className={`font-black text-3xl md:text-5xl uppercase italic tracking-tighter ${
+                t.colors.bg === "#ffffff" ? "text-white" : "text-black"
+              }`}
+            >
+              View Full Resume
+            </h3>
+            <ArrowUpRight
+              className={`${
+                t.colors.bg === "#ffffff" ? "text-white" : "text-black"
+              } transition-transform group-hover:rotate-45`}
+              size={48}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const ExperienceList = ({ theme }: { theme: ThemeKey }) => {
+  const t = THEMES[theme];
+  const jobs = [
+    { company: "Ava Five", role: "React Developer", year: "2023 - Present" },
+    { company: "Xcore Corp", role: "Frontend Dev", year: "2021 - 2023" },
+  ];
+
+  return (
+    <section
+      style={{ borderColor: t.colors.border }}
+      className="py-24 border-t transition-colors duration-500"
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        {jobs.map((job, i) => (
+          <div
+            key={i}
+            style={{ borderColor: t.colors.border }}
+            className="group flex flex-col md:flex-row justify-between items-baseline border-b py-12 hover:bg-opacity-5 transition-colors cursor-default px-4"
+          >
+            <h3
+              style={{ color: t.colors.textSub }}
+              className={`text-4xl md:text-6xl font-bold group-hover:text-[var(--textMain)] transition-colors duration-500 ${t.font}`}
+            >
+              <span style={{ "--textMain": t.colors.textMain } as any}>
+                {job.company}
+              </span>
+            </h3>
+            <div className="flex items-center gap-8 mt-4 md:mt-0">
+              <span
+                style={{ color: t.colors.accent }}
+                className="text-xl font-medium"
+              >
+                {job.role}
+              </span>
+              <span style={{ color: t.colors.textSub }} className="font-mono">
+                {job.year}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const Footer = ({ theme }: { theme: ThemeKey }) => {
+  const t = THEMES[theme];
+  return (
+    <footer id="contact" className="pt-20 pb-10 px-6">
+      <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+        <h2
+          style={{ color: t.colors.textMain }}
+          className={`text-5xl md:text-8xl font-black tracking-tighter mb-12 ${t.font}`}
+        >
+          LET'S WORK <br />
+          <span
+            className="text-transparent bg-clip-text"
+            style={{
+              backgroundImage: `linear-gradient(to right, ${t.colors.accent}, ${t.colors.accent}80)`,
+            }}
+          >
+            TOGETHER
+          </span>
+        </h2>
+
+        <a
+          href="mailto:nezar@example.com"
+          style={{ color: t.colors.textMain, borderColor: t.colors.border }}
+          className="inline-flex items-center gap-3 text-2xl md:text-3xl border-b-2 pb-2 mb-20 hover:opacity-80 transition-opacity"
+        >
+          <Mail /> nezar.saab@gmail.com
+        </a>
+
+        <div
+          style={{ borderColor: t.colors.border, color: t.colors.textSub }}
+          className="w-full flex justify-between items-end border-t pt-8 font-mono text-sm uppercase"
+        >
+          <p>Dubai, United Arab Emirates</p>
+          <p>© 2025 Nezar Saab.</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 export default function Home() {
+  const [currentTheme, setCurrentTheme] = useState<ThemeKey>("obsidian");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main
+      className="min-h-screen transition-colors duration-700 ease-in-out"
+      style={{ backgroundColor: THEMES[currentTheme].colors.bg }}
+    >
+      <Navbar
+        currentTheme={currentTheme}
+        setTheme={setCurrentTheme}
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
+      />
+      <Hero theme={currentTheme} />
+      <BentoGrid theme={currentTheme} />
+      <ExperienceList theme={currentTheme} />
+      <Footer theme={currentTheme} />
+    </main>
   );
 }
