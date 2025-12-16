@@ -768,8 +768,10 @@ const InteractiveBackground = ({ theme }: { theme: ThemeKey }) => {
   const t = THEMES[theme];
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleMouseMove = (e: MouseEvent) => {
       // Smoothly update mouse values
       mouseX.set(e.clientX);
@@ -778,7 +780,9 @@ const InteractiveBackground = ({ theme }: { theme: ThemeKey }) => {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [mouseX, mouseY]);
+
+  if (!isMounted) return null;
 
   // Create smooth spring physics for the blobs so they lag behind the cursor slightly (liquid feel)
   const springConfig = { damping: 25, stiffness: 150 };
@@ -786,8 +790,12 @@ const InteractiveBackground = ({ theme }: { theme: ThemeKey }) => {
   const y1 = useSpring(mouseY, springConfig);
 
   // Inverse movement for the second blob
-  const x2 = useTransform(mouseX, (value) => window.innerWidth - value);
-  const y2 = useTransform(mouseY, (value) => window.innerHeight - value);
+  const x2 = useTransform(mouseX, (value) =>
+    typeof window !== "undefined" ? window.innerWidth - value : 0
+  );
+  const y2 = useTransform(mouseY, (value) =>
+    typeof window !== "undefined" ? window.innerHeight - value : 0
+  );
   const springX2 = useSpring(x2, springConfig);
   const springY2 = useSpring(y2, springConfig);
 
