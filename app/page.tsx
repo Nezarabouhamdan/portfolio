@@ -6,6 +6,8 @@ import {
   AnimatePresence,
   useMotionTemplate,
   useMotionValue,
+  useSpring,
+  useTransform,
 } from "framer-motion";
 import {
   Mail,
@@ -17,6 +19,11 @@ import {
   Globe,
   ChevronDown,
   Database,
+  Monitor,
+  Rocket,
+  Smartphone,
+  Store,
+  Briefcase,
 } from "lucide-react";
 
 // --- THEME CONFIGURATION ---
@@ -447,9 +454,37 @@ const BentoGrid = ({ theme }: { theme: ThemeKey }) => {
 
 const ExperienceList = ({ theme }: { theme: ThemeKey }) => {
   const t = THEMES[theme];
+
   const jobs = [
-    { company: "Ava Five", role: "React Developer", year: "2023 - Present" },
-    { company: "Xcore Corp", role: "Frontend Dev", year: "2021 - 2023" },
+    {
+      company: "khales.ae",
+      role: "Software Engineer (Next.js & React)",
+      year: "Feb 2025 - Present",
+      location: "Dubai, UAE · On-site",
+      description: [
+        "Architecting a large-scale, multilingual project management platform (Arabic/English) using Next.js 14 and SSR for maximum SEO performance.",
+        "Managing complex global state and real-time data synchronization using Context API and TypeScript to ensure 99.9% data accuracy.",
+        "Establishing the component library architecture with Tailwind CSS, reducing development time for new features by ~40%.",
+      ],
+      skills: [
+        "Next.js 14",
+        "TypeScript",
+        "Performance Architecture",
+        "SSR/SSG",
+      ],
+    },
+    {
+      company: "Avafive",
+      role: "Frontend Developer",
+      year: "Apr 2024 - Dec 2024",
+      location: "Dubai, UAE · Hybrid",
+      description: [
+        "Delivered interactive Fintech dashboards translating complex financial data into intuitive React UI components.",
+        "Optimized application core vitals by implementing lazy loading and code-splitting, resulting in sub-second load times.",
+        "Collaborated directly with backend teams to integrate secure RESTful APIs and managed scaleable Redux state logic.",
+      ],
+      skills: ["React.js", "Redux Toolkit", "Fintech UX", "API Integration"],
+    },
   ];
 
   return (
@@ -457,34 +492,114 @@ const ExperienceList = ({ theme }: { theme: ThemeKey }) => {
       style={{ borderColor: t.colors.border }}
       className="py-24 border-t transition-colors duration-500"
     >
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="mb-16">
+          <h2
+            style={{ color: t.colors.textMain }}
+            className={`text-4xl font-bold mb-4 ${t.font}`}
+          >
+            Professional{" "}
+            <span style={{ color: t.colors.accent }}>Experience</span>
+          </h2>
+        </div>
+
         {jobs.map((job, i) => (
           <div
             key={i}
             style={{ borderColor: t.colors.border }}
-            className="group flex flex-col md:flex-row justify-between items-baseline border-b py-12 hover:bg-opacity-5 transition-colors cursor-default px-4"
+            className="border-l-2 pl-8 pb-16 last:pb-0 relative transition-colors duration-300"
           >
-            <h3
-              style={{ color: t.colors.textSub }}
-              className={`text-4xl md:text-6xl font-bold group-hover:text-[var(--textMain)] transition-colors duration-500 ${t.font}`}
-            >
-              <span style={{ "--textMain": t.colors.textMain } as any}>
-                {job.company}
-              </span>
-            </h3>
-            <div className="flex items-center gap-8 mt-4 md:mt-0">
-              <span
-                style={{ color: t.colors.accent }}
-                className="text-xl font-medium"
+            {/* Timeline Dot */}
+            <div
+              style={{
+                backgroundColor: t.colors.bg,
+                borderColor: t.colors.accent,
+              }}
+              className="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2"
+            />
+
+            <div className="mb-4">
+              <h3
+                style={{ color: t.colors.textMain }}
+                className={`text-3xl font-bold mb-1 ${t.font}`}
               >
-                {job.role}
-              </span>
-              <span style={{ color: t.colors.textSub }} className="font-mono">
-                {job.year}
-              </span>
+                {job.company}
+              </h3>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+                <span
+                  style={{ color: t.colors.accent }}
+                  className="text-lg font-medium tracking-wide"
+                >
+                  {job.role}
+                </span>
+                <span
+                  style={{ color: t.colors.textSub }}
+                  className="text-sm font-mono bg-white/5 px-2 py-1 rounded"
+                >
+                  {job.year}
+                </span>
+              </div>
+              <p
+                style={{ color: t.colors.textSub }}
+                className="text-xs font-mono uppercase tracking-widest opacity-70"
+              >
+                {job.location}
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <ul style={{ color: t.colors.textSub }} className="space-y-4">
+                {job.description.map((point, idx) => (
+                  <li
+                    key={idx}
+                    className="flex gap-3 text-base leading-relaxed"
+                  >
+                    <span
+                      style={{ color: t.colors.accent }}
+                      className="mt-1.5 min-w-[6px] h-[6px] rounded-full bg-current opacity-70"
+                    />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {job.skills.map((skill) => (
+                <span
+                  key={skill}
+                  style={{
+                    color: t.colors.textMain,
+                    borderColor: t.colors.border,
+                  }}
+                  className="text-xs font-bold px-3 py-1 rounded border opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
           </div>
         ))}
+
+        {/* DOWNLOAD RESUME BUTTON */}
+        <div
+          className="mt-16 pt-8 border-t border-dashed"
+          style={{ borderColor: t.colors.border }}
+        >
+          <a
+            href="/my-resume.pdf"
+            download
+            style={{ color: t.colors.textMain }}
+            className="group flex items-center gap-3 text-sm font-bold hover:opacity-70 transition-opacity"
+          >
+            <div
+              style={{ backgroundColor: t.colors.accent }}
+              className="w-2 h-2 rounded-full animate-pulse"
+            />
+            Download Full Resume (PDF) for more details
+            <ArrowUpRight size={16} />
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -511,11 +626,11 @@ const Footer = ({ theme }: { theme: ThemeKey }) => {
         </h2>
 
         <a
-          href="mailto:nezar@example.com"
+          href="mailto:nwa200079@gmail.com"
           style={{ color: t.colors.textMain, borderColor: t.colors.border }}
           className="inline-flex items-center gap-3 text-2xl md:text-3xl border-b-2 pb-2 mb-20 hover:opacity-80 transition-opacity"
         >
-          <Mail /> nezar.saab@gmail.com
+          <Mail /> nwa200079@gmail.com
         </a>
 
         <div
@@ -530,25 +645,232 @@ const Footer = ({ theme }: { theme: ThemeKey }) => {
   );
 };
 
+// --- NEW COMPONENT: SERVICES ---
+const Services = ({ theme }: { theme: ThemeKey }) => {
+  const t = THEMES[theme];
+
+  const services = [
+    {
+      title: "Landing Pages",
+      desc: "High-conversion single-page sites designed to capture leads. Optimized for speed, SEO, and persuasive storytelling.",
+      icon: Rocket,
+      tags: ["Framer Motion", "Conversion", "SEO"],
+    },
+    {
+      title: "Custom Web Apps",
+      desc: "Complex SaaS platforms and dashboards. I build the logic, state management, and API integrations for heavy-duty tools.",
+      icon: Monitor,
+      tags: ["React.js", "Next.js", "SaaS"],
+    },
+    {
+      title: "Corporate Identity",
+      desc: "Large-scale multi-page websites for established companies. CMS integration (Sanity/Strapi) for easy content updates.",
+      icon: Briefcase,
+      tags: ["CMS", "Brand Consistency", "Scale"],
+    },
+    {
+      title: "Portfolio Websites",
+      desc: "Personal branding sites (like this one) for executives and creatives. Interactive, memorable, and unique.",
+      icon: Smartphone,
+      tags: ["Personal Brand", "Interactive", "3D"],
+    },
+    {
+      title: "E-Commerce / Commercial",
+      desc: "Shopify Headless or Custom Next.js stores. Focused on user experience, cart logic, and payment gateway security.",
+      icon: Store,
+      tags: ["Stripe", "Shopify", "UI/UX"],
+    },
+  ];
+
+  return (
+    <section className="py-24 px-6 transition-colors duration-500 relative z-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-16">
+          <h2
+            style={{ color: t.colors.textMain }}
+            className={`text-4xl md:text-6xl font-black mb-6 ${t.font}`}
+          >
+            I Engineer <span style={{ color: t.colors.accent }}>Value</span>.
+          </h2>
+          <p style={{ color: t.colors.textSub }} className="text-xl max-w-2xl">
+            From high-speed marketing pages to complex enterprise dashboards.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((service, index) => (
+            <ThemeCard
+              key={index}
+              theme={theme}
+              className={`p-8 flex flex-col justify-between min-h-[280px] hover:-translate-y-2 transition-transform duration-300 ${
+                index === 0 || index === 3 ? "lg:col-span-2" : "col-span-1"
+              }`}
+            >
+              <div>
+                <div className="flex justify-between items-start mb-6">
+                  <div
+                    style={{
+                      backgroundColor: `${t.colors.accent}15`,
+                      color: t.colors.accent,
+                    }}
+                    className="p-3 rounded-lg"
+                  >
+                    <service.icon size={28} />
+                  </div>
+                  <ArrowUpRight
+                    style={{ color: t.colors.textSub }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
+                </div>
+
+                <h3
+                  style={{ color: t.colors.textMain }}
+                  className={`text-2xl font-bold mb-3 ${t.font}`}
+                >
+                  {service.title}
+                </h3>
+
+                <p
+                  style={{ color: t.colors.textSub }}
+                  className="leading-relaxed text-sm"
+                >
+                  {service.desc}
+                </p>
+              </div>
+
+              <div
+                className="flex gap-2 flex-wrap mt-8 pt-8 border-t border-neutral-800/50"
+                style={{ borderColor: `${t.colors.border}` }}
+              >
+                {service.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    style={{
+                      color: t.colors.textMain,
+                      backgroundColor: `${t.colors.textMain}05`,
+                    }}
+                    className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-md font-mono"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </ThemeCard>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// --- NEW COMPONENT: INTERACTIVE FLUID BACKGROUND ---
+const InteractiveBackground = ({ theme }: { theme: ThemeKey }) => {
+  const t = THEMES[theme];
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Smoothly update mouse values
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Create smooth spring physics for the blobs so they lag behind the cursor slightly (liquid feel)
+  const springConfig = { damping: 25, stiffness: 150 };
+  const x1 = useSpring(mouseX, springConfig);
+  const y1 = useSpring(mouseY, springConfig);
+
+  // Inverse movement for the second blob
+  const x2 = useTransform(mouseX, (value) => window.innerWidth - value);
+  const y2 = useTransform(mouseY, (value) => window.innerHeight - value);
+  const springX2 = useSpring(x2, springConfig);
+  const springY2 = useSpring(y2, springConfig);
+
+  return (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* 1. Technical Grid Overlay (Subtle) */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(${t.colors.textSub} 1px, transparent 1px), linear-gradient(90deg, ${t.colors.textSub} 1px, transparent 1px)`,
+          backgroundSize: "100px 100px",
+        }}
+      />
+
+      {/* 2. Noise Texture (The "High-End" Film Grain Look) */}
+      <div
+        className="absolute inset-0 opacity-[0.08] mix-blend-overlay z-10"
+        style={{
+          backgroundImage:
+            'url("https://grainy-gradients.vercel.app/noise.svg")',
+        }}
+      />
+
+      {/* 3. Primary Interactive Blob (Follows Mouse) */}
+      <motion.div
+        className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-20"
+        style={{
+          x: x1,
+          y: y1,
+          translateX: "-50%",
+          translateY: "-50%",
+          backgroundColor: t.colors.accent,
+        }}
+      />
+
+      {/* 4. Secondary Counter-Blob (Moves Opposite) */}
+      <motion.div
+        className="absolute w-[500px] h-[500px] rounded-full blur-[100px] opacity-15"
+        style={{
+          x: springX2,
+          y: springY2,
+          translateX: "-50%",
+          translateY: "-50%",
+          backgroundColor: t.colors.accent,
+        }}
+      />
+
+      {/* 5. Ambient Center Glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[150px] opacity-5"
+        style={{ backgroundColor: t.colors.textMain }}
+      />
+    </div>
+  );
+};
+
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<ThemeKey>("obsidian");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <main
-      className="min-h-screen transition-colors duration-700 ease-in-out"
+      className="min-h-screen transition-colors duration-700 ease-in-out relative overflow-hidden"
       style={{ backgroundColor: THEMES[currentTheme].colors.bg }}
     >
+      {/* ⬇️ INTERACTIVE FLUID BACKGROUND ⬇️ */}
+      <InteractiveBackground theme={currentTheme} />
+
       <Navbar
         currentTheme={currentTheme}
         setTheme={setCurrentTheme}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
       />
-      <Hero theme={currentTheme} />
-      <BentoGrid theme={currentTheme} />
-      <ExperienceList theme={currentTheme} />
-      <Footer theme={currentTheme} />
+
+      {/* All content wrapped in z-10 so it sits ON TOP of background */}
+      <div className="relative z-10">
+        <Hero theme={currentTheme} />
+        <Services theme={currentTheme} />
+        <BentoGrid theme={currentTheme} />
+        <ExperienceList theme={currentTheme} />
+        <Footer theme={currentTheme} />
+      </div>
     </main>
   );
 }
