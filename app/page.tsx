@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 
 // --- THEME CONFIGURATION ---
-// Define the specific styles for every mode requested
 const THEMES = {
   obsidian: {
     label: "Industrial (Current)",
@@ -246,8 +245,6 @@ const Hero = ({ theme }: { theme: ThemeKey }) => {
       <div className="max-w-7xl mx-auto z-10 w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* LEFT: Text Content */}
         <motion.div
-          // We add a key here so text re-animates slightly on theme change if you want,
-          // or remove 'key' to keep text static while photo changes.
           className="order-2 md:order-1 relative z-20"
         >
           <div className="flex items-center gap-4 mb-8">
@@ -259,7 +256,7 @@ const Hero = ({ theme }: { theme: ThemeKey }) => {
               style={{ color: t.colors.accent }}
               className="font-mono tracking-widest uppercase text-sm font-bold transition-colors duration-500"
             >
-              Frontend Architect
+              Software Engineer
             </span>
           </div>
 
@@ -318,7 +315,6 @@ const Hero = ({ theme }: { theme: ThemeKey }) => {
           <AnimatePresence mode="wait">
             <motion.img
               key={theme} // This triggers the animation when theme changes
-              // MAKE SURE YOU NAME YOUR FILES EXACTLY LIKE THIS IN PUBLIC FOLDER
               src="https://i.ibb.co/yn24JrmR/Black-and-White-Headshots-Nearme-karenvaisman-photographer-Ventura-losangeles-Burbank-Woodland-Hills.png"
               alt="Nezar Saab"
               initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
@@ -342,10 +338,10 @@ const Hero = ({ theme }: { theme: ThemeKey }) => {
 const BentoGrid = ({ theme }: { theme: ThemeKey }) => {
   const t = THEMES[theme];
   const stacks = [
-    { icon: Layout, title: "Next.js 14", sub: "App Router" },
-    { icon: Cpu, title: "React Core", sub: "Performance" },
-    { icon: Terminal, title: "TypeScript", sub: "Strict Typing" },
-    { icon: Database, title: "State Mgmt", sub: "Redux / Zustand" },
+    { icon: Layout, title: "Next.js & React", sub: "Server Architecture" },
+    { icon: Terminal, title: "Python & PHP", sub: "Backend Logic" },
+    { icon: Database, title: "Database", sub: "SQL & Optimization" },
+    { icon: Cpu, title: "System Design", sub: "Scalability" },
   ];
 
   return (
@@ -356,7 +352,7 @@ const BentoGrid = ({ theme }: { theme: ThemeKey }) => {
             style={{ color: t.colors.textMain }}
             className={`text-4xl md:text-6xl font-bold mb-6 ${t.font}`}
           >
-            Built for <span style={{ color: t.colors.accent }}>Scale</span>.
+            Engineering <span style={{ color: t.colors.accent }}>Systems</span>.
           </h2>
         </div>
 
@@ -379,19 +375,17 @@ const BentoGrid = ({ theme }: { theme: ThemeKey }) => {
                 style={{ color: t.colors.textMain }}
                 className={`text-3xl font-bold mb-4 ${t.font}`}
               >
-                Frontend Lead
+                Full-Stack Engineer
               </h3>
               <p
                 style={{ color: t.colors.textSub }}
                 className="leading-relaxed"
               >
-                Delivering high-stakes projects at{" "}
-                <strong style={{ color: t.colors.textMain }}>Ava Five</strong>.
-                Specializing in complex architecture.
+                Bridging the gap between complex <strong>Backend Logic (Python/PHP)</strong> and high-performance <strong>Frontend (Next.js)</strong> at <strong style={{ color: t.colors.textMain }}>Khales Group</strong>.
               </p>
             </div>
             <div className="mt-8 flex gap-3 flex-wrap">
-              {["React", "Dubai", "Fintech"].map((tag) => (
+              {["Python", "PHP", "Next.js", "System Arch"].map((tag) => (
                 <span
                   key={tag}
                   style={{
@@ -457,33 +451,35 @@ const ExperienceList = ({ theme }: { theme: ThemeKey }) => {
 
   const jobs = [
     {
-      company: "khales.ae",
-      role: "Software Engineer (Next.js & React)",
-      year: "Feb 2025 - Present",
+      company: "Khales Group",
+      role: "Software Engineer | Full-Stack Developer",
+      year: "02/2025 - Present",
       location: "Dubai, UAE · On-site",
       description: [
-        "Architecting a large-scale, multilingual project management platform (Arabic/English) using Next.js 14 and SSR for maximum SEO performance.",
-        "Managing complex global state and real-time data synchronization using Context API and TypeScript to ensure 99.9% data accuracy.",
-        "Establishing the component library architecture with Tailwind CSS, reducing development time for new features by ~40%.",
+        "Engineered and maintained a large-scale project management platform, focusing on system scalability and optimizing server-side logic.",
+        "Designed robust data fetching strategies ensuring seamless integration between frontend components and complex Backend APIs (Python/PHP environments).",
+        "Architected modular system components and managed complex state synchronization for real-time data integrity.",
+        "Collaborated on system design and database structure decisions to translate business requirements into technical solutions.",
       ],
       skills: [
-        "Next.js 14",
-        "TypeScript",
-        "Performance Architecture",
-        "SSR/SSG",
+        "Python & PHP Concepts",
+        "Next.js 14 (SSR/SSG)",
+        "System Architecture",
+        "API Design",
       ],
     },
     {
-      company: "Avafive",
-      role: "Frontend Developer",
-      year: "Apr 2024 - Dec 2024",
+      company: "Ava Five",
+      role: "React.JS and Next.Js Developer",
+      year: "04/2024 - 12/2024",
       location: "Dubai, UAE · Hybrid",
       description: [
-        "Delivered interactive Fintech dashboards translating complex financial data into intuitive React UI components.",
-        "Optimized application core vitals by implementing lazy loading and code-splitting, resulting in sub-second load times.",
-        "Collaborated directly with backend teams to integrate secure RESTful APIs and managed scaleable Redux state logic.",
+        "Implemented code splitting, lazy loading, and caching techniques to optimize application performance.",
+        "Utilized Next.js features like SSR and SSG to enhance performance and SEO ranking.",
+        "Integrated real-time content previews and slug-based dynamic routing using Sanity Image Pipeline.",
+        "Participated in agile development methodologies (Scrum/Kanban) and daily stand-ups.",
       ],
-      skills: ["React.js", "Redux Toolkit", "Fintech UX", "API Integration"],
+      skills: ["React.js", "Next.js", "Performance Optimization", "Sanity CMS"],
     },
   ];
 
