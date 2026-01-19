@@ -295,10 +295,10 @@ const Experience = ({ theme }: { theme: ThemeKey }) => {
       ]
     },
     {
-      company: "Ava Five",
+      company: "BSI",
       role: "Next.js / React Developer",
       period: "04/2024 - 12/2024",
-      location: "Dubai, UAE",
+      location: "Remote",
       tasks: [
         "Optimized application speed by 40% through code splitting and lazy loading.",
         "Implemented advanced SSR/SSG patterns for SEO-sensitive corporate projects.",
