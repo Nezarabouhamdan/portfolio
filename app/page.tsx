@@ -127,7 +127,7 @@ const Navbar = ({ currentTheme, setTheme, isMenuOpen, setIsMenuOpen }: any) => {
                 {Object.entries(THEMES).map(([key, theme]) => (
                   <button
                     key={key}
-                    onClick={() => { setTheme(key); setIsMenuOpen(false); }}
+                    onClick={() => { setTheme(key as ThemeKey); setIsMenuOpen(false); }}
                     className="text-left px-4 py-3 rounded-lg text-sm hover:opacity-70 transition-opacity flex items-center gap-3"
                   >
                     <div style={{ background: theme.colors.accent }} className="w-3 h-3 rounded-full" />
@@ -196,7 +196,7 @@ const Hero = ({ theme }: { theme: ThemeKey }) => {
           </h1>
 
           <p style={{ color: t.colors.textSub }} className="text-xl max-w-lg mb-12 leading-relaxed">
-            Software Engineer specializing in <span style={{ color: t.colors.textMain }} className="font-bold underline decoration-2" style={{ textDecorationColor: t.colors.accent }}>Scalable Systems</span>. I architect and build robust digital infrastructures in Dubai.
+            Software Engineer specializing in <span style={{ color: t.colors.textMain, textDecorationColor: t.colors.accent }} className="font-bold underline decoration-2">Scalable Systems</span>. I architect and build robust digital infrastructures in Dubai.
           </p>
 
           <div 
